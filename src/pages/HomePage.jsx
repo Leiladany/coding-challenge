@@ -121,90 +121,90 @@ export const HomePage = () => {
 
   return (
     <Stack>
-      <Stack
-        component="form"
-        onSubmit={handleSearch}
-        sx={{
-          flexDirection: "row",
-          justifyContent: "center",
-          p: 2,
-        }}
-      >
-        <Autocomplete
-          sx={{ width: "100%", backgroundColor: "white", color: "#FFCB05" }}
-          options={allNames}
-          value={search}
-          onChange={(_event, newValue) => setSearch(newValue)}
-          inputValue={search || ""}
-          onInputChange={handleInputChange}
-          filterOptions={filterOptions}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Type Pokémon name..."
-              variant="outlined"
-            />
-          )}
-        />
-        <Button
-          type="submit"
-          variant="contained"
+        <Stack
+          component="form"
+          onSubmit={handleSearch}
           sx={{
-            ml: 1,
-            backgroundColor: "white",
-            color: "#FFCB05",
-            border: "1px solid #1D2C5E",
+            flexDirection: "row",
+            justifyContent: "center",
+            p: 2,
           }}
         >
-          Search
-        </Button>
-      </Stack>
-      {pokemon && (
-        <Stack sx={{ my: 4, alignItems: "center" }}>
-          <Card
+          <Autocomplete
+            sx={{ width: 300, backgroundColor: "white", color: "#FFCB05" }}
+            options={allNames}
+            value={search}
+            onChange={(_event, newValue) => setSearch(newValue)}
+            inputValue={search || ""}
+            onInputChange={handleInputChange}
+            filterOptions={filterOptions}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Type Pokémon name..."
+                variant="outlined"
+              />
+            )}
+          />
+          <Button
+            type="submit"
+            variant="contained"
             sx={{
-              textAlign: "center",
-              border: "3px solid black",
-              width: "15%",
+              ml: 1,
+              backgroundColor: "white",
+              color: "#FFCB05",
+              border: "1px solid #1D2C5E",
             }}
           >
-            <img src={pokemon.sprite} alt={pokemon.name} />
-            <Stack sx={{ borderTop: "1px solid black" }}>
-              <Typography>{pokemon.name}</Typography>
-              <Typography>#{pokemon.id}</Typography>
-            </Stack>
-          </Card>
-          <Stack
-            sx={{
-              my: 2,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Button
-              sx={{ width: "50%", backgroundColor: "white", color: "#FFCB05" }}
-              variant="contained"
-              onClick={handlePrevious}
-              disabled={pokemon.id === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              sx={{ backgroundColor: "white", color: "#FFCB05" }}
-              variant="contained"
-              onClick={handleNext}
-              disabled={pokemon.id === 898}
-            >
-              Next
-            </Button>
-          </Stack>
+            Search
+          </Button>
         </Stack>
-      )}
-      {error && (
-        <Typography sx={{ color: "red", p: 2 }}>
-          {error}
-        </Typography>
-      )}
-    </Stack>
+        {pokemon && (
+          <Stack sx={{ my: 4, alignItems: "center" }}>
+            <Card
+              sx={{
+                textAlign: "center",
+                border: "3px solid black",
+                width: "15%",
+              }}
+            >
+              <img src={pokemon.sprite} alt={pokemon.name} />
+              <Stack sx={{ borderTop: "1px solid black" }}>
+                <Typography>{pokemon.name}</Typography>
+                <Typography>#{pokemon.id}</Typography>
+              </Stack>
+            </Card>
+            <Stack
+              sx={{
+                my: 2,
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button
+                sx={{
+                  width: "50%",
+                  backgroundColor: "white",
+                  color: "#FFCB05",
+                }}
+                variant="contained"
+                onClick={handlePrevious}
+                disabled={pokemon.id === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                sx={{ backgroundColor: "white", color: "#FFCB05" }}
+                variant="contained"
+                onClick={handleNext}
+                disabled={pokemon.id === 898}
+              >
+                Next
+              </Button>
+            </Stack>
+          </Stack>
+        )}
+        {error && <Typography sx={{ color: "red", p: 2 }}>{error}</Typography>}
+      </Stack>
   );
 };
