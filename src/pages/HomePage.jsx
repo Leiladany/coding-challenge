@@ -127,12 +127,11 @@ export const HomePage = () => {
         sx={{
           flexDirection: "row",
           justifyContent: "center",
-          backgroundColor: "pink",
           p: 2,
         }}
       >
         <Autocomplete
-          sx={{ width: "100%" }}
+          sx={{ width: "100%", backgroundColor: "white", color: "#FFCB05" }}
           options={allNames}
           value={search}
           onChange={(_event, newValue) => setSearch(newValue)}
@@ -147,21 +146,43 @@ export const HomePage = () => {
             />
           )}
         />
-        <Button type="submit" variant="contained" sx={{ ml: 1 }}>
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            ml: 1,
+            backgroundColor: "white",
+            color: "#FFCB05",
+            border: "1px solid #1D2C5E",
+          }}
+        >
           Search
         </Button>
       </Stack>
       {pokemon && (
-        <Stack spacing={2} alignItems="center">
+        <Stack sx={{ my: 4, alignItems: "center" }}>
           <Card
-            sx={{ textAlign: "center", backgroundColor: "blue", width: "15%" }}
+            sx={{
+              textAlign: "center",
+              border: "3px solid black",
+              width: "15%",
+            }}
           >
             <img src={pokemon.sprite} alt={pokemon.name} />
-            <Typography variant="h6">{pokemon.name}</Typography>
-            <Typography variant="body1">ID: {pokemon.id}</Typography>
+            <Stack sx={{ borderTop: "1px solid black" }}>
+              <Typography>{pokemon.name}</Typography>
+              <Typography>#{pokemon.id}</Typography>
+            </Stack>
           </Card>
-          <Stack direction="row" spacing={2}>
+          <Stack
+            sx={{
+              my: 2,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
             <Button
+              sx={{ width: "50%", backgroundColor: "white", color: "#FFCB05" }}
               variant="contained"
               onClick={handlePrevious}
               disabled={pokemon.id === 1}
@@ -169,6 +190,7 @@ export const HomePage = () => {
               Previous
             </Button>
             <Button
+              sx={{ backgroundColor: "white", color: "#FFCB05" }}
               variant="contained"
               onClick={handleNext}
               disabled={pokemon.id === 898}
@@ -179,7 +201,7 @@ export const HomePage = () => {
         </Stack>
       )}
       {error && (
-        <Typography sx={{ color: "red", p: 2 }} variant="body1">
+        <Typography sx={{ color: "red", p: 2 }}>
           {error}
         </Typography>
       )}
