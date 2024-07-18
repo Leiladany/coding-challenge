@@ -204,7 +204,7 @@ export const HomePage = () => {
             </Stack>
           </Stack>
         )}
-        {error && <Typography sx={{ color: "red", p: 2 }}>{error}</Typography>}
+        {error && <Typography sx={{ color: "red", p: 2, alignSelf: "center" }}>{error}</Typography>}
       </Stack>
   );
 };
