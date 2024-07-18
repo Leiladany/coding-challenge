@@ -1,11 +1,35 @@
-import { Button, Card, Input, Stack, Typography } from "@mui/joy";
-import { useState } from "react";
+import {
+  Button,
+  Card,
+  Stack,
+  Typography,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const HomePage = () => {
   const [search, setSearch] = useState("");
   const [pokemon, setPokemon] = useState(null);
   const [error, setError] = useState(null);
+  const [allNames, setAllNames] = useState([]);
+
+  useEffect(() => {
+    const fetchAllPokemonNames = async () => {
+      try {
+        const response = await axios.get(
+          `https://pokeapi.co/api/v2/pokemon?limit=898`
+        );
+        const names = response.data.results.map((pokemon) => pokemon.name);
+        setAllNames(names);
+      } catch (err) {
+        console.error("Error fetching Pokémon", err);
+      }
+    };
+
+    fetchAllPokemonNames();
+  }, []);
 
   const fetchPokemon = async (name) => {
     try {
@@ -24,10 +48,19 @@ export const HomePage = () => {
     }
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (search) {
-      fetchPokemon(search);
+    if (search.trim() !== "") {
+      const foundPokemon = allNames.find((pokemonName) =>
+        pokemonName.toLowerCase().startsWith(search.toLowerCase())
+      );
+
+      if (foundPokemon) {
+        await fetchPokemon(foundPokemon);
+      } else {
+        setError(`No Pokémon found "${search}".`);
+        setPokemon(null);
+      }
     }
   };
 
@@ -51,7 +84,7 @@ export const HomePage = () => {
   };
 
   const handleNext = async () => {
-    if (pokemon && pokemon.id < 1010) {
+    if (pokemon && pokemon.id < 898) {
       try {
         const response = await axios.get(
           `https://pokeapi.co/api/v2/pokemon/${pokemon.id + 1}`
@@ -69,20 +102,54 @@ export const HomePage = () => {
     }
   };
 
+  const filterOptions = (options, { inputValue }) => {
+    return options.filter((option) =>
+      option.toLowerCase().startsWith(inputValue.toLowerCase())
+    );
+  };
+
   return (
     <Stack>
-      <Stack sx={{ backgroundColor: "pink", p: 2 }}>
-        <form onSubmit={handleSearch}>
-          <Input
-            placeholder="Type in here…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </form>
+      <Stack
+        component="form"
+        onSubmit={handleSearch}
+        sx={{
+          flexDirection: "row",
+          justifyContent: "center",
+          backgroundColor: "pink",
+          p: 2,
+        }}
+      >
+        <Autocomplete
+          sx={{ width: "100%" }}
+          freeSolo
+          options={allNames}
+          value={search}
+          onChange={(event, newValue) => setSearch(newValue)}
+          inputValue={search}
+          onInputChange={(event, newInputValue) => setSearch(newInputValue)}
+          filterOptions={filterOptions}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Type Pokémon name..."
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: null,
+              }}
+            />
+          )}
+        />
+        <Button type="submit" variant="contained" sx={{ ml: 1 }}>
+          Search
+        </Button>
       </Stack>
       {pokemon && (
         <Stack spacing={2} alignItems="center">
-          <Card sx={{ backgroundColor: "blue", width: "15%" }}>
+          <Card
+            sx={{ textAlign: "center", backgroundColor: "blue", width: "15%" }}
+          >
             <img src={pokemon.sprite} alt={pokemon.name} />
             <Typography variant="h6">{pokemon.name}</Typography>
             <Typography variant="body1">ID: {pokemon.id}</Typography>
@@ -98,6 +165,7 @@ export const HomePage = () => {
             <Button
               variant="contained"
               onClick={handleNext}
+              disabled={pokemon.id === 898}
             >
               Next
             </Button>
