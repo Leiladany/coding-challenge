@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Button,
   Card,
@@ -6,11 +8,9 @@ import {
   Autocomplete,
   TextField,
 } from "@mui/material";
-import { useState, useEffect } from "react";
-import axios from "axios";
 
 export const HomePage = () => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
   const [pokemon, setPokemon] = useState(null);
   const [error, setError] = useState(null);
   const [allNames, setAllNames] = useState([]);
@@ -25,6 +25,7 @@ export const HomePage = () => {
         setAllNames(names);
       } catch (err) {
         console.error("Error fetching Pokémon", err);
+        setError("Error fetching Pokémon");
       }
     };
 
@@ -43,14 +44,18 @@ export const HomePage = () => {
       });
       setError(null);
     } catch (err) {
-      setError("Not found");
+      setError("Pokémon not found");
       setPokemon(null);
     }
   };
 
+  const handleInputChange = (event, newInputValue) => {
+    setSearch(newInputValue);
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (search.trim() !== "") {
+    if (search) {
       const foundPokemon = allNames.find((pokemonName) =>
         pokemonName.toLowerCase().startsWith(search.toLowerCase())
       );
@@ -61,6 +66,10 @@ export const HomePage = () => {
         setError(`No Pokémon found "${search}".`);
         setPokemon(null);
       }
+    } else {
+      setSearch(null);
+      setPokemon(null);
+      setError(null);
     }
   };
 
@@ -77,7 +86,7 @@ export const HomePage = () => {
         });
         setError(null);
       } catch (err) {
-        setError("Not found");
+        setError("Pokémon not found");
         setPokemon(null);
       }
     }
@@ -96,13 +105,15 @@ export const HomePage = () => {
         });
         setError(null);
       } catch (err) {
-        setError("Not Found");
+        setError("Pokémon not found");
         setPokemon(null);
       }
     }
   };
 
   const filterOptions = (options, { inputValue }) => {
+    if (!inputValue) return options;
+
     return options.filter((option) =>
       option.toLowerCase().startsWith(inputValue.toLowerCase())
     );
@@ -122,22 +133,17 @@ export const HomePage = () => {
       >
         <Autocomplete
           sx={{ width: "100%" }}
-          freeSolo
           options={allNames}
           value={search}
-          onChange={(event, newValue) => setSearch(newValue)}
-          inputValue={search}
-          onInputChange={(event, newInputValue) => setSearch(newInputValue)}
+          onChange={(_event, newValue) => setSearch(newValue)}
+          inputValue={search || ""}
+          onInputChange={handleInputChange}
           filterOptions={filterOptions}
           renderInput={(params) => (
             <TextField
               {...params}
               label="Type Pokémon name..."
               variant="outlined"
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: null,
-              }}
             />
           )}
         />
